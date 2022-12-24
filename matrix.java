@@ -1,4 +1,4 @@
-
+import java.util.*;
 // Sampled code from Suyash Sonawane
 
 /*Matrix class will have the following funtionaties: 
@@ -159,6 +159,17 @@ class Matrix {
         Matrix temp = new Matrix(x.length, 1);
         for (int i = 0; i < x.length; i++) {
             temp.data[i][0] = x[i];
+        }
+        return temp;
+    }
+
+    public List<Double> toArray() {
+        List<Double> temp = new ArrayList<Double>();
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                temp.add(data[i][j]);
+            }
         }
         return temp;
     }
