@@ -67,12 +67,63 @@ public class neuralNetwork {
      * algorithm-7bb3aa2f95fd
      */
 
+    // Repeat the same steps for the privious layers. Back propogation will run from
+    // output layers to input layers
+
     public void train(double[] X, double[] Y) {
+
         Matrix input = Matrix.fromArray(X);
         Matrix hidden = Matrix.multiply(weights_ih, input);
         hidden.add(bias_h);
         hidden.sigmoid();
 
+        Matrix output = Matrix.multiply(weights_ho, hidden);
+        output.add(bias_o);
+        output.sigmoid();
+
+        Matrix target = Matrix.fromArray(Y);
+
+        Matrix error = Matrix.subtract(target, output);
+        Matrix gradient = output.dsigmoid();
+        gradient.multiply(error);
+        gradient.multiply(l_rate);
+
+        Matrix hidden_T = Matrix.transpose(hidden);
+        Matrix who_delta = Matrix.multiply(gradient, hidden_T);
+
+        weights_ho.add(who_delta);
+        bias_o.add(gradient);
+
+        Matrix who_T = Matrix.transpose(weights_ho);
+        Matrix hidden_errors = Matrix.multiply(who_T, error);
+
+        Matrix h_gradient = hidden.dsigmoid();
+        h_gradient.multiply(hidden_errors);
+        h_gradient.multiply(l_rate);
+
+        Matrix i_T = Matrix.transpose(input);
+        Matrix wih_delta = Matrix.multiply(h_gradient, i_T);
+
+        weights_ih.add(wih_delta);
+        bias_h.add(h_gradient);
+
+        // Updated weights of all the layers for the current sample. First step in
+        // processing dataset
+    }
+
+    /*
+     * The fit function will take in two 2D arrays (X and Y) along with the number
+     * of epoches
+     * Epoches refers to the number of iterations to be done on the dataset
+     * Train function will be repeatedly called with random datapoints to map
+     * general network across dataset
+     */
+
+    public void fit(double[][] X, double[][] Y, int epochs) {
+        for (int i = 0; i < epochs; i++) {
+            int sampleN = (int) (Math.random() * X.length);
+            this.train(X[sampleN], Y[sampleN]);
+        }
     }
 
 }
